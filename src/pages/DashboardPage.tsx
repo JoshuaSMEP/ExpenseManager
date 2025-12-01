@@ -82,7 +82,7 @@ export function DashboardPage() {
               <Clock className="w-6 h-6 text-yellow-400" />
             </div>
             <p className="text-2xl font-bold text-white">{pendingExpenses.length}</p>
-            <p className="text-white/60 text-sm mt-1.5">Pending</p>
+            <p className="text-white/60 text-sm mt-1.5" style={{ marginBottom: '5px' }}>Pending</p>
           </GlassCard>
 
           <GlassCard padding="md" className="text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}>
@@ -90,7 +90,7 @@ export function DashboardPage() {
               <CheckCircle className="w-6 h-6 text-success-primary" />
             </div>
             <p className="text-2xl font-bold text-white">{recentlyReimbursed.length}</p>
-            <p className="text-white/60 text-sm mt-1.5">Paid (7d)</p>
+            <p className="text-white/60 text-sm mt-1.5" style={{ marginBottom: '5px' }}>Paid (7d)</p>
           </GlassCard>
 
           <GlassCard padding="md" className="text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}>
@@ -98,7 +98,7 @@ export function DashboardPage() {
               <TrendingUp className="w-6 h-6 text-accent-primary" />
             </div>
             <p className="text-2xl font-bold text-white">{formatCurrency(totalPending)}</p>
-            <p className="text-white/60 text-sm mt-1.5">Awaiting</p>
+            <p className="text-white/60 text-sm mt-1.5" style={{ marginBottom: '5px' }}>Awaiting</p>
           </GlassCard>
 
           <GlassCard padding="md" className="text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}>
@@ -106,7 +106,7 @@ export function DashboardPage() {
               <Banknote className="w-6 h-6 text-emerald-400" />
             </div>
             <p className="text-2xl font-bold text-white">{formatCurrency(totalReimbursed)}</p>
-            <p className="text-white/60 text-sm mt-1.5">Reimbursed</p>
+            <p className="text-white/60 text-sm mt-1.5" style={{ marginBottom: '5px' }}>Reimbursed</p>
           </GlassCard>
         </motion.div>
 
@@ -154,7 +154,8 @@ export function DashboardPage() {
             <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
             <button
               onClick={() => navigate('/expenses')}
-              className="text-accent-primary text-sm hover:underline"
+              className="text-sm hover:underline text-accent-primary dark:text-white"
+              style={{ textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)' }}
             >
               View all
             </button>

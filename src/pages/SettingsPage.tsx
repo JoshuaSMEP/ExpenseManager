@@ -147,7 +147,7 @@ export function SettingsPage() {
             transition={{ delay: 0.1 * (sectionIndex + 2) }}
             className="mb-6"
           >
-            <h3 className="text-white/50 text-sm font-medium uppercase tracking-wider mb-3 px-2" style={{ marginTop: '20px' }}>
+            <h3 className="text-white/80 text-sm font-medium uppercase tracking-wider mb-3 px-2" style={{ marginTop: '20px' }}>
               {section.title}
             </h3>
             <GlassCard padding="none" className="divide-y divide-white/10">
@@ -216,7 +216,7 @@ export function SettingsPage() {
           transition={{ delay: 0.6 }}
           className="text-center text-white/30 text-sm mt-8"
         >
-          Glass v1.0.0
+          Glass v1.0.1
         </motion.p>
       </div>
     </div>

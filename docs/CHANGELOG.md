@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] - 2025-12-01
+
+### Changed
+- Removed Google and Apple login options from login page (Microsoft SSO only)
+- Improved "View all" button styling in dark mode (white text with dark shadow)
+- Enhanced section title readability on Settings page (lighter font color)
+
+### Fixed
+- Added 5px bottom margin to dashboard stat card labels (Pending, Paid, etc.)
+- Added 5px top margin to expense amounts on Expenses page
+- Added 10px bottom margin to status badges on Expenses page
+- Added 2px left/right padding to filter tab buttons on Expenses page
+- Added 5px left/top margin to policy violation alert icon and text on Expense Detail page
+
+---
+
 ## [1.0.0] - 2025-12-01
 
 ### Added

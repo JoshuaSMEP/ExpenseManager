@@ -31,7 +31,7 @@ export function Badge({ status, children }: BadgeProps) {
         'inline-flex items-center rounded-full text-xs font-medium border',
         statusClasses[status]
       )}
-      style={{ padding: '2px 4px' }}
+      style={{ padding: '2px 4px', marginBottom: '10px' }}
     >
       {children || statusLabels[status]}
     </span>

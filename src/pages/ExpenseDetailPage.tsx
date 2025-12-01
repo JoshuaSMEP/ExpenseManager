@@ -146,7 +146,7 @@ export function ExpenseDetailPage() {
             {/* Policy Violations */}
             {expense.policyViolations && expense.policyViolations.length > 0 && (
               <div className="p-4 rounded-xl bg-warning/20 border border-warning/30" style={{ marginLeft: '15px', marginRight: '15px', marginTop: '10px', marginBottom: '10px' }}>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3" style={{ marginLeft: '5px', marginTop: '5px' }}>
                   <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0" />
                   <div>
                     <p className="text-warning font-medium text-sm mb-1">Policy Flag</p>

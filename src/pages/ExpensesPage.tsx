@@ -85,7 +85,7 @@ export function ExpensesPage() {
                   ? 'bg-accent-primary text-gray-900'
                   : 'bg-white/10 text-white hover:bg-white/20'
               }`}
-              style={{ padding: '2px' }}
+              style={{ paddingLeft: '10px', paddingRight: '10px', paddingTop: '8px', paddingBottom: '8px' }}
             >
               {tab.label}
               {tab.value !== 'all' && (
@@ -144,7 +144,7 @@ export function ExpensesPage() {
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-white font-bold">
+                            <p className="text-white font-bold" style={{ marginTop: '5px' }}>
                               {formatCurrency(expense.amount)}
                             </p>
                             <Badge status={expense.status} />
