@@ -1,0 +1,634 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --gradient-1: #667eea;
+  --gradient-2: #764ba2;
+  --gradient-3: #4facfe;
+  --gradient-4: #00f2fe;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --accent-primary: #00f5ff;
+  --accent-secondary: #00ddeb;
+  --success-primary: #00f5a0;
+  --success-secondary: #00d99a;
+  --text-heading: #ffffff;
+  --text-body: #e0e7ff;
+  --warning: #ffb800;
+}
+
+/* Dark mode variables - Stunning purple/magenta theme */
+.dark {
+  --gradient-1: #0a0a0f;
+  --gradient-2: #13071e;
+  --gradient-3: #1a0a2e;
+  --gradient-4: #0f0520;
+  --glass-bg: rgba(20, 10, 40, 0.6);
+  --glass-border: rgba(139, 92, 246, 0.2);
+  --accent-primary: #a855f7;
+  --accent-secondary: #ec4899;
+  --success-primary: #22d3ee;
+  --success-secondary: #06b6d4;
+  --text-heading: #f8fafc;
+  --text-body: #cbd5e1;
+  --warning: #fbbf24;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(-45deg, #667eea, #764ba2, #4facfe, #00f2fe);
+  background-size: 400% 400%;
+  animation: gradient 60s ease infinite;
+  min-height: 100vh;
+  color: var(--text-body);
+  transition: background 0.5s ease, color 0.3s ease;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =====================================================
+   STUNNING DARK MODE - "WOW" THEME
+   ===================================================== */
+
+/* Dark mode body - Deep space gradient with aurora effect */
+.dark body {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.05) 0%, transparent 70%),
+    linear-gradient(180deg, #0a0a0f 0%, #13071e 25%, #1a0a2e 50%, #0f0520 75%, #0a0a0f 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 200%;
+  animation: darkGradient 30s ease infinite, auroraShift 20s ease-in-out infinite;
+  background-attachment: fixed;
+}
+
+@keyframes darkGradient {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 50% 50%, 0% 0%; }
+  50% { background-position: 100% 100%, 0% 0%, 50% 50%, 0% 100%; }
+}
+
+@keyframes auroraShift {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(15deg); }
+}
+
+/* Animated stars background for dark mode */
+.dark body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(139,92,246,0.9), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(236,72,153,0.8), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 200px 50px, rgba(34,211,238,0.7), transparent),
+    radial-gradient(1px 1px at 250px 90px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 300px 150px, rgba(139,92,246,0.8), transparent),
+    radial-gradient(1px 1px at 350px 30px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(2px 2px at 400px 100px, rgba(236,72,153,0.6), transparent),
+    radial-gradient(1px 1px at 450px 180px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 500px 60px, rgba(34,211,238,0.8), transparent);
+  background-size: 550px 200px;
+  animation: twinkle 8s ease-in-out infinite, starMove 60s linear infinite;
+  opacity: 0.6;
+}
+
+.dark body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 100px 200px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 200px 300px, rgba(139,92,246,0.7), transparent),
+    radial-gradient(1px 1px at 300px 100px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(2px 2px at 400px 250px, rgba(236,72,153,0.6), transparent),
+    radial-gradient(1px 1px at 500px 350px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 150px 400px, rgba(34,211,238,0.5), transparent),
+    radial-gradient(1px 1px at 250px 450px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(2px 2px at 350px 500px, rgba(139,92,246,0.6), transparent);
+  background-size: 600px 550px;
+  animation: twinkle 12s ease-in-out infinite reverse, starMove 90s linear infinite reverse;
+  opacity: 0.4;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes starMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-200px); }
+}
+
+/* Ensure content stays above stars */
+.dark #root {
+  position: relative;
+  z-index: 1;
+}
+
+/* =====================================================
+   GLASS CARD STYLES
+   ===================================================== */
+
+/* Glass card base styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+/* Dark mode glass cards - Stunning frosted effect */
+.dark .glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 10, 40, 0.7) 0%,
+    rgba(30, 15, 50, 0.6) 50%,
+    rgba(20, 10, 40, 0.7) 100%
+  );
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 60px rgba(139, 92, 246, 0.1);
+}
+
+.dark .glass-card:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 80px rgba(139, 92, 246, 0.15);
+}
+
+.glass-card-dark {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* =====================================================
+   GLASS INPUT STYLES
+   ===================================================== */
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+}
+
+/* Dark mode inputs */
+.dark .glass-input {
+  background: rgba(20, 10, 40, 0.6);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.dark .glass-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+}
+
+/* =====================================================
+   BUTTON STYLES
+   ===================================================== */
+
+.glass-button {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border: none;
+  border-radius: 16px;
+  color: #0a0a0a;
+  font-weight: 600;
+  padding: 16px 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.glass-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+}
+
+/* Dark mode button glow */
+.dark .glass-button {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.dark .glass-button:hover {
+  box-shadow:
+    0 0 40px rgba(168, 85, 247, 0.6),
+    0 0 80px rgba(236, 72, 153, 0.3);
+}
+
+.glass-button:hover::before {
+  left: 100%;
+}
+
+.glass-button:active {
+  transform: scale(0.98);
+}
+
+.glass-button-outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  color: white;
+  font-weight: 600;
+  padding: 16px 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.glass-button-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+  transform: scale(1.05);
+}
+
+/* Dark mode outline buttons */
+.dark .glass-button-outline {
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.dark .glass-button-outline:hover {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.success-button {
+  background: linear-gradient(135deg, var(--success-primary), var(--success-secondary));
+}
+
+.dark .success-button {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4);
+  box-shadow: 0 4px 20px rgba(34, 211, 238, 0.4);
+}
+
+.dark .success-button:hover {
+  box-shadow:
+    0 0 40px rgba(34, 211, 238, 0.6),
+    0 0 60px rgba(6, 182, 212, 0.3);
+}
+
+/* =====================================================
+   FLOATING ACTION BUTTON
+   ===================================================== */
+
+.floating-button {
+  position: fixed;
+  bottom: 110px;
+  right: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0, 245, 255, 0.4);
+  animation: pulse-glow 2s ease-in-out infinite;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+@media (min-width: 768px) {
+  .floating-button {
+    bottom: 32px;
+    right: 32px;
+  }
+}
+
+.floating-button:hover {
+  transform: scale(1.1);
+}
+
+/* Dark mode floating button */
+.dark .floating-button {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.5);
+  animation: pulse-glow-dark 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 8px 32px rgba(0, 245, 255, 0.4); }
+  50% { box-shadow: 0 8px 48px rgba(0, 245, 255, 0.7); }
+}
+
+@keyframes pulse-glow-dark {
+  0%, 100% { box-shadow: 0 8px 32px rgba(168, 85, 247, 0.5); }
+  50% { box-shadow: 0 8px 48px rgba(236, 72, 153, 0.7); }
+}
+
+/* =====================================================
+   SHIMMER & LOADING EFFECTS
+   ===================================================== */
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+.dark .shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 92, 246, 0.05) 25%,
+    rgba(139, 92, 246, 0.15) 50%,
+    rgba(139, 92, 246, 0.05) 75%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* =====================================================
+   TAB STYLES
+   ===================================================== */
+
+.tab-active {
+  background: rgba(0, 245, 255, 0.2);
+  color: var(--accent-primary);
+  border-bottom: 2px solid var(--accent-primary);
+}
+
+.dark .tab-active {
+  background: rgba(168, 85, 247, 0.2);
+  border-bottom-color: var(--accent-primary);
+}
+
+/* =====================================================
+   STATUS BADGES
+   ===================================================== */
+
+.badge-pending {
+  background: rgba(255, 184, 0, 0.2);
+  color: #ffb800;
+  border: 1px solid rgba(255, 184, 0, 0.3);
+}
+
+.badge-approved {
+  background: rgba(0, 245, 160, 0.2);
+  color: var(--success-primary);
+  border: 1px solid rgba(0, 245, 160, 0.3);
+}
+
+.badge-rejected {
+  background: rgba(255, 100, 100, 0.2);
+  color: #ff6464;
+  border: 1px solid rgba(255, 100, 100, 0.3);
+}
+
+.badge-paid {
+  background: rgba(0, 245, 255, 0.2);
+  color: var(--accent-primary);
+  border: 1px solid rgba(0, 245, 255, 0.3);
+}
+
+/* Dark mode badges with neon glow */
+.dark .badge-pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+}
+
+.dark .badge-approved {
+  background: rgba(34, 211, 238, 0.15);
+  color: #22d3ee;
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+
+.dark .badge-rejected {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.3);
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.2);
+}
+
+.dark .badge-paid {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+}
+
+/* =====================================================
+   SIDEBAR DARK MODE
+   ===================================================== */
+
+.dark .sidebar-glass {
+  background: linear-gradient(
+    180deg,
+    rgba(20, 10, 40, 0.9) 0%,
+    rgba(15, 5, 30, 0.95) 100%
+  );
+  border-color: rgba(139, 92, 246, 0.2);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* =====================================================
+   SCROLLBAR STYLING
+   ===================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* =====================================================
+   SELECTION & FOCUS STYLES
+   ===================================================== */
+
+::selection {
+  background: rgba(0, 245, 255, 0.3);
+  color: white;
+}
+
+.dark ::selection {
+  background: rgba(168, 85, 247, 0.4);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* =====================================================
+   TEXT COLORS FOR DARK MODE
+   ===================================================== */
+
+.dark .text-accent-primary {
+  color: #a855f7 !important;
+}
+
+.dark .text-success-primary {
+  color: #22d3ee !important;
+}
+
+.dark .bg-accent-primary {
+  background-color: #a855f7 !important;
+}
+
+.dark .bg-accent-primary\/10 {
+  background-color: rgba(168, 85, 247, 0.1) !important;
+}
+
+.dark .bg-accent-primary\/20 {
+  background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.dark .border-accent-primary {
+  border-color: #a855f7 !important;
+}
+
+.dark .border-accent-primary\/50 {
+  border-color: rgba(168, 85, 247, 0.5) !important;
+}
+
+/* Accent primary color in dark mode for special elements */
+.dark [style*="color: rgb(0, 245, 255)"],
+.dark [style*="color:#00f5ff"] {
+  color: #a855f7 !important;
+}
+
+/* =====================================================
+   NAVIGATION INDICATOR
+   ===================================================== */
+
+.dark .nav-indicator {
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+}
+
+/* =====================================================
+   SIDEBAR OFFSET
+   ===================================================== */
+
+@media (min-width: 768px) {
+  .sidebar-offset {
+    margin-left: 288px;
+  }
+}
+
+/* =====================================================
+   SPECIAL DARK MODE TRANSITIONS
+   ===================================================== */
+
+/* Smooth theme transition */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Neon text glow effect for dark mode headings */
+.dark h1, .dark h2 {
+  text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+}
+
+/* Icon glow in dark mode */
+.dark .icon-glow {
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+}
