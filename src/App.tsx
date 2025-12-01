@@ -12,6 +12,14 @@ import {
   APDashboardPage,
   SettingsPage,
   NotificationsPage,
+  ReportsPage,
+  CardsPage,
+  TripsPage,
+  PolicyPage,
+  SearchPage,
+  AdminPage,
+  EditExpensePage,
+  ManualExpensePage,
 } from './pages';
 import { useStore } from './store/useStore';
 
@@ -130,6 +138,78 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <ReportsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/cards"
+          element={
+            <ProtectedRoute>
+              <CardsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/trips"
+          element={
+            <ProtectedRoute>
+              <TripsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/policy"
+          element={
+            <ProtectedRoute>
+              <PolicyPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <SearchPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/expense/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditExpensePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/expense/manual"
+          element={
+            <ProtectedRoute>
+              <ManualExpensePage />
             </ProtectedRoute>
           }
         />

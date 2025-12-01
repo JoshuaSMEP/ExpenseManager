@@ -8,6 +8,12 @@ import {
   Settings,
   LogOut,
   Bell,
+  FileText,
+  CreditCard,
+  Briefcase,
+  Shield,
+  Search,
+  Users,
 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
@@ -16,6 +22,12 @@ const navItems = [
   { path: '/expenses', icon: Receipt, label: 'My Expenses' },
   { path: '/approvals', icon: CheckSquare, label: 'Approvals' },
   { path: '/ap-dashboard', icon: LayoutDashboard, label: 'AP Dashboard', roles: ['finance', 'admin'] },
+  { path: '/reports', icon: FileText, label: 'Reports', roles: ['finance', 'admin'] },
+  { path: '/cards', icon: CreditCard, label: 'Card Feed' },
+  { path: '/trips', icon: Briefcase, label: 'Trips' },
+  { path: '/policy', icon: Shield, label: 'Policy' },
+  { path: '/search', icon: Search, label: 'Search' },
+  { path: '/admin', icon: Users, label: 'Admin', roles: ['admin'] },
   { path: '/notifications', icon: Bell, label: 'Notifications' },
   { path: '/settings', icon: Settings, label: 'Settings' },
 ];
