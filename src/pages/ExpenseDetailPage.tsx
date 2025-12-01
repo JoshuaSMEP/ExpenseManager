@@ -8,7 +8,6 @@ import {
   Calendar,
   Tag,
   FileText,
-  Receipt,
   AlertTriangle,
   Check,
   X,
