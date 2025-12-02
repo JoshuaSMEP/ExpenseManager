@@ -74,3 +74,50 @@ export interface Trip {
   budget?: number;
   description?: string;
 }
+
+export interface CardTransaction {
+  id: string;
+  userId: string;
+  cardLast4: string;
+  merchant: string;
+  amount: number;
+  currency: string;
+  postedDate: Date;
+  matchedExpenseId?: string;
+  status: 'unmatched' | 'matched' | 'ignored';
+}
+
+export interface PolicyRule {
+  id: string;
+  name: string;
+  description: string;
+  category?: ExpenseCategory;
+  maxAmount?: number;
+  requiresReceipt: boolean;
+  requiresApproval: boolean;
+  isActive: boolean;
+}
+
+export interface AuditLog {
+  id: string;
+  userId: string;
+  userName: string;
+  action: string;
+  entityType: 'expense' | 'user' | 'policy' | 'export';
+  entityId: string;
+  details?: string;
+  ipAddress?: string;
+  timestamp: Date;
+}
+
+export interface ExportBatch {
+  id: string;
+  createdBy: string;
+  dateRange: { start: Date; end: Date };
+  totalAmount: number;
+  expenseCount: number;
+  status: 'prepared' | 'exported' | 'imported';
+  format: 'csv' | 'pdf' | 'viewpoint';
+  fileUrl?: string;
+  createdAt: Date;
+}

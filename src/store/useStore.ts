@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, Expense, Notification, ExpenseStatus } from '../types';
+import type { User, Expense, Notification, ExpenseStatus, Trip, CardTransaction, PolicyRule, AuditLog, ExportBatch } from '../types';
 
 // Mock data for demo
 const mockUser: User = {
@@ -130,6 +130,21 @@ interface AppState {
   // Notifications
   notifications: Notification[];
 
+  // Trips
+  trips: Trip[];
+
+  // Card Transactions
+  cardTransactions: CardTransaction[];
+
+  // Policy Rules
+  policyRules: PolicyRule[];
+
+  // Audit Logs
+  auditLogs: AuditLog[];
+
+  // Export Batches
+  exportBatches: ExportBatch[];
+
   // UI State
   isDarkMode: boolean;
   isLoading: boolean;
@@ -147,6 +162,18 @@ interface AppState {
   approveExpense: (id: string, approverId: string) => void;
   rejectExpense: (id: string, approverId: string, reason?: string) => void;
 
+  // Trip actions
+  addTrip: (trip: Omit<Trip, 'id'>) => void;
+  updateTrip: (id: string, updates: Partial<Trip>) => void;
+  deleteTrip: (id: string) => void;
+
+  // Card transaction actions
+  matchCardTransaction: (transactionId: string, expenseId: string) => void;
+  ignoreCardTransaction: (transactionId: string) => void;
+
+  // Export actions
+  createExportBatch: (options: { dateRange: { start: Date; end: Date }; format: 'csv' | 'pdf' | 'viewpoint' }) => void;
+
   markNotificationRead: (id: string) => void;
 
   toggleDarkMode: () => void;
@@ -161,6 +188,11 @@ export const useStore = create<AppState>((set) => ({
   expenses: [],
   selectedExpense: null,
   notifications: [],
+  trips: [],
+  cardTransactions: [],
+  policyRules: [],
+  auditLogs: [],
+  exportBatches: [],
   isDarkMode: false,
   isLoading: false,
 
@@ -261,6 +293,67 @@ export const useStore = create<AppState>((set) => ({
             }
           : exp
       ),
+    }));
+  },
+
+  // Trip actions
+  addTrip: (trip) => {
+    const newTrip: Trip = {
+      ...trip,
+      id: Math.random().toString(36).substr(2, 9),
+    };
+    set((state) => ({
+      trips: [...state.trips, newTrip],
+    }));
+  },
+
+  updateTrip: (id, updates) => {
+    set((state) => ({
+      trips: state.trips.map((trip) =>
+        trip.id === id ? { ...trip, ...updates } : trip
+      ),
+    }));
+  },
+
+  deleteTrip: (id) => {
+    set((state) => ({
+      trips: state.trips.filter((trip) => trip.id !== id),
+    }));
+  },
+
+  // Card transaction actions
+  matchCardTransaction: (transactionId, expenseId) => {
+    set((state) => ({
+      cardTransactions: state.cardTransactions.map((t) =>
+        t.id === transactionId
+          ? { ...t, status: 'matched' as const, matchedExpenseId: expenseId }
+          : t
+      ),
+    }));
+  },
+
+  ignoreCardTransaction: (transactionId) => {
+    set((state) => ({
+      cardTransactions: state.cardTransactions.map((t) =>
+        t.id === transactionId ? { ...t, status: 'ignored' as const } : t
+      ),
+    }));
+  },
+
+  // Export actions
+  createExportBatch: (options) => {
+    const newBatch: ExportBatch = {
+      id: Math.random().toString(36).substr(2, 9),
+      createdBy: '1',
+      dateRange: options.dateRange,
+      totalAmount: 0,
+      expenseCount: 0,
+      status: 'prepared',
+      format: options.format,
+      createdAt: new Date(),
+    };
+    set((state) => ({
+      exportBatches: [...state.exportBatches, newBatch],
     }));
   },
 
