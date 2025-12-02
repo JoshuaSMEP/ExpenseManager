@@ -64,6 +64,7 @@ export function ReceiptUploader({
       await page.render({
         canvasContext: context,
         viewport: viewport,
+        canvas: canvas,
       }).promise;
 
       // Use higher quality JPEG for better compression with good quality

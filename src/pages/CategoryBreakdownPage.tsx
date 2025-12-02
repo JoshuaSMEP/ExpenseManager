@@ -639,14 +639,14 @@ function CategoryCard({
 // ============================================================================
 function SummaryStats({ categories, totalSpending }: { categories: CategoryData[]; totalSpending: number }) {
   const topCategory = categories[0];
-  const avgPerCategory = totalSpending / categories.length;
+  const avgPerCategory = categories.length > 0 ? totalSpending / categories.length : 0;
   const totalTransactions = categories.reduce((sum, c) => sum + c.count, 0);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12" style={{ marginTop: '20px', padding: '10px' }}>
       {[
         { label: 'Total Spending', value: formatCurrency(totalSpending), color: '#00f5ff' },
-        { label: 'Categories', value: categories.length.toString(), color: '#a855f7' },
+        { label: 'Avg/Category', value: formatCurrency(avgPerCategory), color: '#a855f7' },
         { label: 'Transactions', value: totalTransactions.toString(), color: '#22c55e' },
         { label: 'Top Category', value: topCategory?.label || '-', color: topCategory?.color || '#fff' },
       ].map((stat, i) => (

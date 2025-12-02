@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Receipt, CheckSquare, LayoutDashboard, Settings, BarChart3 } from 'lucide-react';
-import { useStore } from '../../store/useStore';
+import { Home, Receipt, CheckSquare, Settings, BarChart3 } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
@@ -14,13 +13,9 @@ const navItems = [
 export function Navigation() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useStore();
 
-  // Filter nav items based on user role
-  const filteredNavItems = navItems.filter((item) => {
-    if (!item.roles) return true;
-    return item.roles.includes(user?.role || 'employee');
-  });
+  // Use all nav items
+  const filteredNavItems = navItems;
 
   // Hide navigation on certain pages
   const hiddenPaths = ['/login', '/onboarding', '/expense/new'];
