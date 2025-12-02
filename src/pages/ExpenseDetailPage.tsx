@@ -13,7 +13,7 @@ import {
   X,
   DollarSign,
 } from 'lucide-react';
-import { GlassCard, Button, Badge } from '../components/ui';
+import { GlassCard, Button, Badge, ReceiptGallery } from '../components/ui';
 import { useStore } from '../store/useStore';
 import { formatCurrency, formatDate, getCategoryLabel, getCategoryIcon } from '../utils/formatters';
 
@@ -65,40 +65,38 @@ export function ExpenseDetailPage() {
           className="flex items-center justify-between mb-6"
         >
           <div className="flex items-center gap-4">
-            <button
+            <motion.button
               onClick={() => navigate(-1)}
               className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
               style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}
+              whileHover="hover"
             >
-              <ChevronLeft className="w-6 h-6 text-white" />
-            </button>
+              <motion.div
+                variants={{
+                  hover: {
+                    x: [0, -4, 0, -4, 0],
+                    transition: {
+                      duration: 0.5,
+                      ease: 'easeInOut',
+                    },
+                  },
+                }}
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </motion.div>
+            </motion.button>
             <h1 className="text-2xl font-bold text-white">Expense Details</h1>
           </div>
-          <Badge status={expense.status} />
+          <div style={{ marginTop: '8px' }}>
+            <Badge status={expense.status} />
+          </div>
         </motion.div>
-
-        {/* Receipt Image */}
-        {expense.receiptImageUrl && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <GlassCard padding="none" className="mb-4 overflow-hidden" style={{ marginTop: '10px', marginBottom: '20px' }}>
-              <img
-                src={expense.receiptImageUrl}
-                alt="Receipt"
-                className="w-full h-48 object-cover"
-              />
-            </GlassCard>
-          </motion.div>
-        )}
 
         {/* Main Details Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.1 }}
         >
           <GlassCard className="mb-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.07)' }}>
             {/* Amount & Merchant */}
@@ -224,6 +222,32 @@ export function ExpenseDetailPage() {
             </div>
           </GlassCard>
         </motion.div>
+
+        {/* Receipt Gallery */}
+        {(expense.receiptFiles?.length || expense.receiptImageUrl) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <GlassCard padding="md" className="mb-4" style={{ marginTop: '20px', marginBottom: '20px' }}>
+              <ReceiptGallery
+                files={
+                  expense.receiptFiles?.length
+                    ? expense.receiptFiles
+                    : expense.receiptImageUrl
+                      ? [{
+                          id: 'legacy-1',
+                          url: expense.receiptImageUrl,
+                          type: 'image' as const,
+                          name: 'Receipt',
+                        }]
+                      : []
+                }
+              />
+            </GlassCard>
+          </motion.div>
+        )}
 
         {/* Action Buttons */}
         <motion.div

@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Receipt, CheckSquare, LayoutDashboard, Settings } from 'lucide-react';
+import { Home, Receipt, CheckSquare, LayoutDashboard, Settings, BarChart3 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
+  { path: '/analytics', icon: BarChart3, label: 'Analytics' },
   { path: '/expenses', icon: Receipt, label: 'Expenses' },
   { path: '/approvals', icon: CheckSquare, label: 'Approvals' },
-  { path: '/ap-dashboard', icon: LayoutDashboard, label: 'AP', roles: ['finance', 'admin'] },
   { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 

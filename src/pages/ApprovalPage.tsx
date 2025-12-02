@@ -7,10 +7,9 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
-  ZoomIn,
   AlertTriangle,
 } from 'lucide-react';
-import { GlassCard, Button, Badge, Input } from '../components/ui';
+import { GlassCard, Button, Badge, Input, ReceiptGallery } from '../components/ui';
 import { useStore } from '../store/useStore';
 import { formatCurrency, formatDate, getCategoryLabel } from '../utils/formatters';
 import { triggerConfetti } from '../utils/confetti';
@@ -20,7 +19,6 @@ export function ApprovalPage() {
   const { expenses, approveExpense, rejectExpense, user } = useStore();
   const [comment, setComment] = useState('');
   const [showComment, setShowComment] = useState(false);
-  const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   // Get pending expenses for approval (in a real app, this would be filtered by manager)
   const pendingExpenses = expenses.filter((e) => e.status === 'submitted');
@@ -70,10 +68,12 @@ export function ApprovalPage() {
         <GlassCard className="text-center max-w-md">
           <div className="text-6xl mb-4">✨</div>
           <h2 className="text-2xl font-bold text-white mb-2">All caught up!</h2>
-          <p className="text-white/60 mb-6">
+          <p className="text-white/60" style={{ marginLeft: '30px', marginRight: '30px', marginTop: '15px', marginBottom: '20px' }}>
             No expenses waiting for your approval.
           </p>
-          <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
+          <div className="flex justify-center" style={{ marginBottom: '15px' }}>
+            <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
+          </div>
         </GlassCard>
       </div>
     );
@@ -128,23 +128,23 @@ export function ApprovalPage() {
             exit={{ opacity: 0, x: -100 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-            {/* Receipt image */}
-            {currentExpense?.receiptImageUrl && (
-              <GlassCard padding="none" className="mb-4 overflow-hidden" style={{ marginTop: '5px', marginBottom: '20px' }}>
-                <div
-                  className="relative cursor-pointer"
-                  onClick={() => setShowReceiptModal(true)}
-                >
-                  <img
-                    src={currentExpense.receiptImageUrl}
-                    alt="Receipt"
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <button className="absolute bottom-3 right-3 p-2.5 rounded-full bg-white/20 backdrop-blur-sm">
-                    <ZoomIn className="w-5 h-5 text-white" />
-                  </button>
-                </div>
+            {/* Receipt Gallery */}
+            {(currentExpense?.receiptFiles?.length || currentExpense?.receiptImageUrl) && (
+              <GlassCard padding="md" className="mb-4" style={{ marginTop: '5px', marginBottom: '20px' }}>
+                <ReceiptGallery
+                  files={
+                    currentExpense.receiptFiles?.length
+                      ? currentExpense.receiptFiles
+                      : currentExpense.receiptImageUrl
+                        ? [{
+                            id: 'legacy-1',
+                            url: currentExpense.receiptImageUrl,
+                            type: 'image' as const,
+                            name: 'Receipt',
+                          }]
+                        : []
+                  }
+                />
               </GlassCard>
             )}
 
@@ -290,33 +290,6 @@ export function ApprovalPage() {
         </AnimatePresence>
       </div>
 
-      {/* Receipt modal */}
-      <AnimatePresence>
-        {showReceiptModal && currentExpense?.receiptImageUrl && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
-            onClick={() => setShowReceiptModal(false)}
-          >
-            <motion.img
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              src={currentExpense.receiptImageUrl}
-              alt="Receipt"
-              className="max-w-full max-h-full object-contain rounded-xl"
-            />
-            <button
-              className="absolute top-4 right-4 p-2.5 rounded-full bg-white/20"
-              onClick={() => setShowReceiptModal(false)}
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

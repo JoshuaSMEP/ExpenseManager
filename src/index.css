@@ -5,7 +5,7 @@
   --gradient-1: #667eea;
   --gradient-2: #764ba2;
   --gradient-3: #4facfe;
-  --gradient-4: #00f2fe;
+  --gradient-4: #1e3a8a;
   --glass-bg: rgba(255, 255, 255, 0.12);
   --glass-border: rgba(255, 255, 255, 0.18);
   --accent-primary: #00f5ff;
@@ -25,8 +25,8 @@
   --gradient-4: #0f0520;
   --glass-bg: rgba(20, 10, 40, 0.6);
   --glass-border: rgba(139, 92, 246, 0.2);
-  --accent-primary: #a855f7;
-  --accent-secondary: #ec4899;
+  --accent-primary: #fef08a;
+  --accent-secondary: #fde047;
   --success-primary: #22d3ee;
   --success-secondary: #06b6d4;
   --text-heading: #f8fafc;
@@ -48,7 +48,7 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(-45deg, #667eea, #764ba2, #4facfe, #00f2fe);
+  background: linear-gradient(-45deg, #667eea, #764ba2, #4facfe, #1e3a8a);
   background-size: 400% 400%;
   animation: gradient 60s ease infinite;
   min-height: 100vh;
@@ -71,7 +71,7 @@ body {
   background:
     radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(32, 178, 170, 0.05) 0%, transparent 70%),
     linear-gradient(180deg, #0a0a0f 0%, #13071e 25%, #1a0a2e 50%, #0f0520 75%, #0a0a0f 100%);
   background-size: 100% 100%, 100% 100%, 100% 100%, 100% 200%;
   animation: darkGradient 30s ease infinite, auroraShift 20s ease-in-out infinite;
@@ -425,7 +425,7 @@ body {
 }
 
 .dark .tab-active {
-  background: rgba(168, 85, 247, 0.2);
+  background: rgba(254, 240, 138, 0.2);
   border-bottom-color: var(--accent-primary);
 }
 
@@ -480,10 +480,10 @@ body {
 }
 
 .dark .badge-paid {
-  background: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
-  border-color: rgba(168, 85, 247, 0.3);
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+  background: rgba(254, 240, 138, 0.15);
+  color: #fef08a;
+  border-color: rgba(254, 240, 138, 0.3);
+  box-shadow: 0 0 10px rgba(254, 240, 138, 0.2);
 }
 
 /* =====================================================
@@ -562,7 +562,7 @@ body {
    ===================================================== */
 
 .dark .text-accent-primary {
-  color: #a855f7 !important;
+  color: #fef08a !important;
 }
 
 .dark .text-success-primary {
@@ -570,29 +570,29 @@ body {
 }
 
 .dark .bg-accent-primary {
-  background-color: #a855f7 !important;
+  background-color: #fef08a !important;
 }
 
 .dark .bg-accent-primary\/10 {
-  background-color: rgba(168, 85, 247, 0.1) !important;
+  background-color: rgba(254, 240, 138, 0.1) !important;
 }
 
 .dark .bg-accent-primary\/20 {
-  background-color: rgba(168, 85, 247, 0.2) !important;
+  background-color: rgba(254, 240, 138, 0.2) !important;
 }
 
 .dark .border-accent-primary {
-  border-color: #a855f7 !important;
+  border-color: #fef08a !important;
 }
 
 .dark .border-accent-primary\/50 {
-  border-color: rgba(168, 85, 247, 0.5) !important;
+  border-color: rgba(254, 240, 138, 0.5) !important;
 }
 
 /* Accent primary color in dark mode for special elements */
 .dark [style*="color: rgb(0, 245, 255)"],
 .dark [style*="color:#00f5ff"] {
-  color: #a855f7 !important;
+  color: #fef08a !important;
 }
 
 /* =====================================================
@@ -600,8 +600,8 @@ body {
    ===================================================== */
 
 .dark .nav-indicator {
-  background: linear-gradient(135deg, #a855f7, #ec4899);
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+  background: linear-gradient(135deg, #fef08a, #fde047);
+  box-shadow: 0 0 15px rgba(254, 240, 138, 0.5);
 }
 
 /* =====================================================
@@ -625,10 +625,10 @@ body {
 
 /* Neon text glow effect for dark mode headings */
 .dark h1, .dark h2 {
-  text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+  text-shadow: 0 0 30px rgba(254, 240, 138, 0.3);
 }
 
 /* Icon glow in dark mode */
 .dark .icon-glow {
-  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+  filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.5));
 }

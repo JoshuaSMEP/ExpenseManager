@@ -12,16 +12,27 @@ export interface User {
   createdAt: Date;
 }
 
-export type ExpenseStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'paid' | 'exported';
+export type ExpenseStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'paid' | 'exported' | 'unmatched';
+
+export type ExpenseType = 'reimbursement' | 'company_card';
 
 export type ExpenseCategory =
   | 'meals'
   | 'travel'
   | 'supplies'
-  | 'entertainment'
+  | 'tools'
+  | 'software'
   | 'lodging'
   | 'transportation'
   | 'other';
+
+export interface ReceiptFile {
+  id: string;
+  url: string;
+  type: 'image' | 'pdf';
+  name: string;
+  thumbnailUrl?: string; // Generated thumbnail for PDFs
+}
 
 export interface Expense {
   id: string;
@@ -31,8 +42,10 @@ export interface Expense {
   merchantName: string;
   expenseDate: Date;
   category: ExpenseCategory;
+  expenseType: ExpenseType;
   projectId?: string;
   receiptImageUrl?: string;
+  receiptFiles?: ReceiptFile[];
   status: ExpenseStatus;
   notes?: string;
   policyViolations?: string[];
@@ -42,6 +55,7 @@ export interface Expense {
   paidAt?: Date;
   glCode?: string;
   taxAmount?: number;
+  matchedCardTransactionId?: string; // For company card expenses matched to card feed
   createdAt: Date;
   updatedAt: Date;
 }

@@ -13,6 +13,7 @@ const statusClasses: Record<ExpenseStatus, string> = {
   rejected: 'badge-rejected',
   paid: 'badge-paid',
   exported: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  unmatched: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
 };
 
 const statusLabels: Record<ExpenseStatus, string> = {
@@ -22,6 +23,7 @@ const statusLabels: Record<ExpenseStatus, string> = {
   rejected: 'Rejected',
   paid: 'Paid',
   exported: 'Exported',
+  unmatched: 'Unmatched',
 };
 
 export function Badge({ status, children }: BadgeProps) {

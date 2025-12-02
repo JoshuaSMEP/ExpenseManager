@@ -36,13 +36,26 @@ export function NotificationsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-6"
         >
-          <button
+          <motion.button
             onClick={() => navigate(-1)}
             className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}
+            whileHover="hover"
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
+            <motion.div
+              variants={{
+                hover: {
+                  x: [0, -4, 0, -4, 0],
+                  transition: {
+                    duration: 0.5,
+                    ease: 'easeInOut',
+                  },
+                },
+              }}
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </motion.div>
+          </motion.button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Notifications</h1>
             {unreadCount > 0 && (

@@ -1,10 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ChevronLeft,
-  Upload,
-  X,
   Check,
   Receipt,
   Calendar,
@@ -12,11 +10,13 @@ import {
   Tag,
   FileText,
   AlertTriangle,
+  Loader2,
 } from 'lucide-react';
-import { GlassCard, Button, Input } from '../components/ui';
+import { GlassCard, Button, Input, ReceiptUploader } from '../components/ui';
 import { useStore } from '../store/useStore';
 import { triggerConfetti, triggerSpecialConfetti, isSpecialAmount } from '../utils/confetti';
-import type { ExpenseCategory } from '../types';
+import type { ExpenseCategory, ReceiptFile } from '../types';
+import { extractReceiptData, type ExtractedReceiptData } from '../utils/ocr';
 
 const categories: { value: ExpenseCategory; label: string; icon: string }[] = [
   { value: 'meals', label: 'Meals & Dining', icon: '🍽️' },
@@ -24,7 +24,8 @@ const categories: { value: ExpenseCategory; label: string; icon: string }[] = [
   { value: 'transportation', label: 'Transportation', icon: '🚗' },
   { value: 'lodging', label: 'Lodging', icon: '🏨' },
   { value: 'supplies', label: 'Office Supplies', icon: '📦' },
-  { value: 'entertainment', label: 'Entertainment', icon: '🎭' },
+  { value: 'tools', label: 'Tools', icon: '🔧' },
+  { value: 'software', label: 'Software', icon: '💻' },
   { value: 'other', label: 'Other', icon: '📋' },
 ];
 
@@ -38,17 +39,26 @@ interface LocationState {
 export function ManualExpensePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { addExpense, user } = useStore();
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isOcrProcessing, setIsOcrProcessing] = useState(false);
+  const [ocrMessage, setOcrMessage] = useState('');
   const [policyWarning, setPolicyWarning] = useState<string | null>(null);
-  const [receiptImage, setReceiptImage] = useState<string | null>(null);
+  const [receiptFiles, setReceiptFiles] = useState<ReceiptFile[]>([]);
 
   // Form data
   const [merchantName, setMerchantName] = useState('');
   const [amount, setAmount] = useState('');
+  const [tax, setTax] = useState('');
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
+
+  // Calculated total
+  const calculatedTotal = (() => {
+    const subtotal = parseFloat(amount) || 0;
+    const taxAmount = parseFloat(tax) || 0;
+    return subtotal + taxAmount;
+  })();
   const [category, setCategory] = useState<ExpenseCategory>('meals');
   const [notes, setNotes] = useState('');
 
@@ -61,27 +71,85 @@ export function ManualExpensePage() {
     }
   }, [location.state]);
 
-  const handleFileCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleReceiptFilesChange = async (files: ReceiptFile[], originalFile?: File) => {
+    setReceiptFiles(files);
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setReceiptImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    // If a new file was added, run OCR
+    if (originalFile && files.length > receiptFiles.length) {
+      const isPdf = originalFile.type === 'application/pdf';
+      setIsOcrProcessing(true);
+      setOcrMessage(isPdf ? 'Processing PDF...' : 'Scanning receipt with OCR...');
+
+      try {
+        const ocrResult = await extractReceiptData(originalFile);
+        if (ocrResult.merchantName || ocrResult.amount || ocrResult.date) {
+          setOcrMessage('Receipt data extracted!');
+          handleOcrResult(ocrResult);
+        } else {
+          setOcrMessage('Could not extract data from receipt');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error('OCR failed:', error);
+        setOcrMessage('OCR failed - please enter details manually');
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      setIsOcrProcessing(false);
+      setOcrMessage('');
+    }
+  };
+
+  const handleOcrResult = (data: ExtractedReceiptData) => {
+    // Auto-fill form fields from OCR results
+    let newCategory: ExpenseCategory = category;
+
+    if (data.merchantName && !merchantName) {
+      setMerchantName(data.merchantName);
+
+      // Auto-categorize Anthropic as software subscription
+      if (data.merchantName.toLowerCase().includes('anthropic')) {
+        newCategory = 'software';
+        setCategory('software');
+        setNotes('Advanced AI Tool Subscription');
+      }
+    }
+    if (data.amount && !amount) {
+      setAmount(data.amount.toString());
+      // Run policy check with the new category (in case it was changed above)
+      const numAmount = parseFloat(data.amount.toString());
+      checkPolicyViolation(numAmount, newCategory);
+    }
+    if (data.tax && !tax) {
+      setTax(data.tax.toString());
+    }
+    // Total is now calculated automatically from subtotal + tax
+    if (data.date) {
+      setExpenseDate(data.date.toISOString().split('T')[0]);
+    }
+  };
+
+  const checkPolicyViolation = (checkAmount: number, checkCategory: ExpenseCategory) => {
+    if (checkCategory === 'meals' && checkAmount > 75) {
+      setPolicyWarning('This exceeds the daily meal limit of $75. Please add justification.');
+    } else if (checkCategory === 'lodging' && checkAmount > 200) {
+      setPolicyWarning('This exceeds the daily lodging limit of $200. Please add justification.');
+    } else {
+      setPolicyWarning(null);
+    }
   };
 
   const handleAmountChange = (value: string) => {
     setAmount(value);
     const numAmount = parseFloat(value);
+    checkPolicyViolation(numAmount, category);
+  };
 
-    if (category === 'meals' && numAmount > 75) {
-      setPolicyWarning('This exceeds the daily meal limit of $75. Please add justification.');
-    } else if (category === 'lodging' && numAmount > 200) {
-      setPolicyWarning('This exceeds the daily lodging limit of $200. Please add justification.');
-    } else {
-      setPolicyWarning(null);
+  const handleCategoryChange = (newCategory: ExpenseCategory) => {
+    setCategory(newCategory);
+    const numAmount = parseFloat(amount);
+    if (!isNaN(numAmount)) {
+      checkPolicyViolation(numAmount, newCategory);
     }
   };
 
@@ -97,7 +165,8 @@ export function ManualExpensePage() {
       merchantName,
       expenseDate: new Date(expenseDate),
       category,
-      receiptImageUrl: receiptImage || undefined,
+      receiptFiles: receiptFiles.length > 0 ? receiptFiles : undefined,
+      receiptImageUrl: receiptFiles.length > 0 && receiptFiles[0].type === 'image' ? receiptFiles[0].url : undefined,
       status: 'draft' as const,
       notes,
       policyViolations: policyWarning ? [policyWarning] : undefined,
@@ -127,7 +196,8 @@ export function ManualExpensePage() {
       merchantName,
       expenseDate: new Date(expenseDate),
       category,
-      receiptImageUrl: receiptImage || undefined,
+      receiptFiles: receiptFiles.length > 0 ? receiptFiles : undefined,
+      receiptImageUrl: receiptFiles.length > 0 && receiptFiles[0].type === 'image' ? receiptFiles[0].url : undefined,
       status: 'submitted' as const,
       notes,
       policyViolations: policyWarning ? [policyWarning] : undefined,
@@ -175,41 +245,44 @@ export function ManualExpensePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          {/* Receipt upload (optional) */}
-          {receiptImage ? (
-            <GlassCard padding="sm" className="mb-4">
-              <div className="relative">
-                <img
-                  src={receiptImage}
-                  alt="Receipt"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <button
-                  onClick={() => setReceiptImage(null)}
-                  className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-black/50 hover:bg-black/70"
-                >
-                  <X className="w-4 h-4 text-white" />
-                </button>
+          {/* OCR Processing indicator */}
+          {isOcrProcessing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                boxShadow: [
+                  '0 0 10px rgba(255, 0, 255, 0.3)',
+                  '0 0 25px rgba(255, 0, 255, 0.6)',
+                  '0 0 10px rgba(255, 0, 255, 0.3)',
+                ],
+              }}
+              transition={{
+                boxShadow: {
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                },
+              }}
+              className="w-full py-4 rounded-[22px] bg-white/10"
+              style={{ marginTop: '25px', marginBottom: '25px' }}
+            >
+              <div className="flex flex-col items-center">
+                <Loader2 className="w-6 h-6 text-accent-primary mx-auto mb-2 animate-spin" />
+                <p className="text-accent-primary text-sm">{ocrMessage}</p>
               </div>
-            </GlassCard>
-          ) : (
-            <GlassCard padding="md" className="mb-4">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileCapture}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full py-4 border-2 border-dashed border-white/20 rounded-xl hover:border-accent-primary/50 transition-colors"
-              >
-                <Upload className="w-6 h-6 text-white/40 mx-auto mb-2" />
-                <p className="text-white/60 text-sm">Add Receipt (Optional)</p>
-              </button>
-            </GlassCard>
+            </motion.div>
           )}
+
+          {/* Receipt upload */}
+          <GlassCard padding="md" className="mb-4" style={{ marginBottom: '20px', paddingLeft: '15px', paddingRight: '15px' }}>
+            <ReceiptUploader
+              files={receiptFiles}
+              onFilesChange={handleReceiptFilesChange}
+              required={true}
+              maxFiles={10}
+            />
+          </GlassCard>
 
           <GlassCard>
             <div className="space-y-4">
@@ -225,12 +298,35 @@ export function ManualExpensePage() {
 
               <div style={{ marginLeft: '15px', marginRight: '15px', marginTop: '10px' }}>
                 <Input
-                  label="Amount"
+                  label="Subtotal"
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => handleAmountChange(e.target.value)}
+                  icon={<DollarSign className="w-5 h-5" />}
+                />
+              </div>
+
+              <div style={{ marginLeft: '15px', marginRight: '15px', marginTop: '10px' }}>
+                <Input
+                  label="Tax"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={tax}
+                  onChange={(e) => setTax(e.target.value)}
+                  icon={<DollarSign className="w-5 h-5" />}
+                />
+              </div>
+
+              <div style={{ marginLeft: '15px', marginRight: '15px', marginTop: '10px' }}>
+                <Input
+                  label="Total"
+                  type="text"
+                  value={calculatedTotal > 0 ? calculatedTotal.toFixed(2) : ''}
+                  placeholder="0.00"
+                  readOnly
                   icon={<DollarSign className="w-5 h-5" />}
                 />
               </div>
@@ -256,7 +352,7 @@ export function ManualExpensePage() {
                     <button
                       key={cat.value}
                       type="button"
-                      onClick={() => setCategory(cat.value)}
+                      onClick={() => handleCategoryChange(cat.value)}
                       className={`p-3.5 rounded-xl text-left transition-all ${
                         category === cat.value
                           ? 'bg-accent-primary/20 border-2 border-accent-primary'
@@ -315,14 +411,14 @@ export function ManualExpensePage() {
                 <Button
                   variant="outline"
                   onClick={handleSubmit}
-                  disabled={!merchantName || !amount || isProcessing}
+                  disabled={!merchantName || !amount || receiptFiles.length === 0 || isProcessing}
                   className="flex-1"
                 >
                   Save Draft
                 </Button>
                 <Button
                   onClick={handleSubmitForApproval}
-                  disabled={!merchantName || !amount || isProcessing}
+                  disabled={!merchantName || !amount || receiptFiles.length === 0 || isProcessing}
                   loading={isProcessing}
                   className="flex-1"
                   icon={<Check className="w-5 h-5" />}

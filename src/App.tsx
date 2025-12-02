@@ -20,6 +20,7 @@ import {
   AdminPage,
   EditExpensePage,
   ManualExpensePage,
+  AnalyticsPage,
 } from './pages';
 import { useStore } from './store/useStore';
 
@@ -210,6 +211,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <ManualExpensePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <AnalyticsPage />
             </ProtectedRoute>
           }
         />

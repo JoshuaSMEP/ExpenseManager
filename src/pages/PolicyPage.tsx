@@ -64,10 +64,20 @@ const mockPolicyRules: PolicyRule[] = [
   },
   {
     id: 'p6',
-    name: 'Entertainment Limit',
-    description: 'Client entertainment limited to $150 per person. Manager approval required.',
-    category: 'entertainment',
+    name: 'Tools Limit',
+    description: 'Tool purchases limited to $150 per item. Manager approval required for larger purchases.',
+    category: 'tools',
     maxAmount: 150,
+    requiresReceipt: true,
+    requiresApproval: true,
+    isActive: true,
+  },
+  {
+    id: 'p9',
+    name: 'Software Subscriptions',
+    description: 'Software and subscription purchases require pre-approval for amounts over $50/month.',
+    category: 'software',
+    maxAmount: 50,
     requiresReceipt: true,
     requiresApproval: true,
     isActive: true,
@@ -97,7 +107,8 @@ const categoryIcons: Record<ExpenseCategory, string> = {
   meals: '🍽️',
   travel: '✈️',
   supplies: '📦',
-  entertainment: '🎭',
+  tools: '🔧',
+  software: '💻',
   lodging: '🏨',
   transportation: '🚗',
   other: '📋',
@@ -115,7 +126,8 @@ export function PolicyPage() {
     'transportation',
     'lodging',
     'supplies',
-    'entertainment',
+    'tools',
+    'software',
     'other',
   ];
 
@@ -147,13 +159,26 @@ export function PolicyPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-6"
         >
-          <button
+          <motion.button
             onClick={() => navigate(-1)}
             className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}
+            whileHover="hover"
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
+            <motion.div
+              variants={{
+                hover: {
+                  x: [0, -4, 0, -4, 0],
+                  transition: {
+                    duration: 0.5,
+                    ease: 'easeInOut',
+                  },
+                },
+              }}
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </motion.div>
+          </motion.button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Expense Policy</h1>
             <p className="text-white/60 text-sm">Company expense guidelines and limits</p>

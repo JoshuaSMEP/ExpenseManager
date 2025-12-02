@@ -133,13 +133,26 @@ export function CardsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-6"
         >
-          <button
+          <motion.button
             onClick={() => navigate(-1)}
             className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}
+            whileHover="hover"
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
+            <motion.div
+              variants={{
+                hover: {
+                  x: [0, -4, 0, -4, 0],
+                  transition: {
+                    duration: 0.5,
+                    ease: 'easeInOut',
+                  },
+                },
+              }}
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </motion.div>
+          </motion.button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Corporate Card Feed</h1>
             <p className="text-white/60 text-sm">
@@ -156,7 +169,7 @@ export function CardsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex gap-2 mb-6 overflow-x-auto pb-2"
+          className="flex items-center gap-2 mb-6 overflow-x-auto pb-2"
         >
           {(['all', 'unmatched', 'matched', 'ignored'] as StatusFilter[]).map((status) => (
             <button
@@ -167,11 +180,12 @@ export function CardsPage() {
                   ? 'bg-accent-primary text-gray-900'
                   : 'bg-white/10 text-white hover:bg-white/20'
               }`}
+              style={{ paddingLeft: '5px', paddingRight: '5px', marginLeft: '5px', marginRight: '5px' }}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
               {status === 'unmatched' && unmatchedCount > 0 && (
-                <span className="ml-2 px-1.5 py-0.5 bg-warning/30 rounded-full text-xs">
-                  {unmatchedCount}
+                <span className="ml-1">
+                  ({unmatchedCount})
                 </span>
               )}
             </button>
@@ -190,12 +204,13 @@ export function CardsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.05 }}
+                  style={{ marginTop: '10px' }}
                 >
                   <GlassCard padding="none">
                     <div className="p-4">
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-center gap-4">
                         {/* Card Icon */}
-                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0" style={{ marginLeft: '15px' }}>
                           <CreditCard className="w-6 h-6 text-white/60" />
                         </div>
 
@@ -208,14 +223,15 @@ export function CardsPage() {
                                 •••• {transaction.cardLast4} · {formatDate(transaction.postedDate)}
                               </p>
                             </div>
-                            <div className="text-right">
-                              <p className="text-white font-bold">
+                            <div className="text-right" style={{ marginTop: '15px', marginRight: '15px' }}>
+                              <p className="text-white font-bold" style={{ marginLeft: '15px' }}>
                                 {formatCurrency(transaction.amount)}
                               </p>
                               <span
                                 className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                                   transaction.status
                                 )}`}
+                                style={{ paddingLeft: '3px', paddingRight: '3px' }}
                               >
                                 {transaction.status}
                               </span>
@@ -224,7 +240,7 @@ export function CardsPage() {
 
                           {/* Actions for unmatched */}
                           {transaction.status === 'unmatched' && (
-                            <div className="flex gap-2 mt-3">
+                            <div className="flex gap-2 mt-3" style={{ marginBottom: '5px' }}>
                               <Button
                                 size="sm"
                                 onClick={() => {
@@ -240,6 +256,7 @@ export function CardsPage() {
                                 variant="secondary"
                                 onClick={() => handleCreateExpense(transaction)}
                                 icon={<Plus className="w-4 h-4" />}
+                                style={{ paddingRight: '15px' }}
                               >
                                 Create Expense
                               </Button>
@@ -247,6 +264,7 @@ export function CardsPage() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => handleIgnore(transaction.id)}
+                                style={{ paddingLeft: '15px', paddingRight: '15px', marginLeft: '5px' }}
                               >
                                 Ignore
                               </Button>

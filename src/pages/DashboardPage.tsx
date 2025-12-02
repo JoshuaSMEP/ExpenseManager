@@ -1,10 +1,11 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, useAnimationControls } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Receipt,
   Clock,
   CheckCircle,
-  Banknote,
+  CreditCard,
   TrendingUp,
   Bell,
 } from 'lucide-react';
@@ -15,6 +16,18 @@ import { formatCurrency, formatRelativeTime, getCategoryIcon } from '../utils/fo
 export function DashboardPage() {
   const navigate = useNavigate();
   const { user, expenses, notifications } = useStore();
+  const [isRinging, setIsRinging] = useState(false);
+  const bellControls = useAnimationControls();
+
+  const handleBellHover = async () => {
+    if (isRinging) return;
+    setIsRinging(true);
+    await bellControls.start({
+      rotate: [0, 15, -15, 10, -10, 5, -5, 0],
+      transition: { duration: 0.6, ease: "easeInOut" }
+    });
+    setIsRinging(false);
+  };
 
   const draftExpenses = expenses.filter((e) => e.status === 'draft');
   const pendingExpenses = expenses.filter((e) => e.status === 'submitted');
@@ -25,6 +38,9 @@ export function DashboardPage() {
   const totalPending = pendingExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalReimbursed = recentlyReimbursed.reduce((sum, e) => sum + e.amount, 0);
   const unreadNotifications = notifications.filter((n) => !n.read).length;
+
+  // Mock unmatched card charges count (matching CardsPage mock data)
+  const unmatchedChargesCount = 3;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -60,13 +76,18 @@ export function DashboardPage() {
 
           {/* Notifications bell */}
           <motion.button
-            whileHover={{ scale: 1.1 }}
+            onHoverStart={handleBellHover}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/notifications')}
             className="relative p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             style={{ transform: 'scale(1.1)' }}
           >
-            <Bell className="w-6 h-6 text-white" />
+            <motion.div
+              animate={bellControls}
+              style={{ originY: 0.1 }}
+            >
+              <Bell className="w-6 h-6 text-white" />
+            </motion.div>
             {unreadNotifications > 0 && (
               <span className="absolute -top-1.5 -right-1.5 min-w-[22px] h-[22px] bg-accent-primary text-gray-900 text-xs font-bold rounded-full flex items-center justify-center" style={{ padding: '3px' }}>
                 {unreadNotifications}
@@ -102,11 +123,11 @@ export function DashboardPage() {
           </GlassCard>
 
           <GlassCard padding="md" className="text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.10)' }}>
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-400/10 mb-3" style={{ marginTop: '5px' }}>
-              <Banknote className="w-6 h-6 text-emerald-400" />
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-warning/10 mb-3" style={{ marginTop: '5px' }}>
+              <CreditCard className="w-6 h-6 text-warning" />
             </div>
-            <p className="text-2xl font-bold text-white">{formatCurrency(totalReimbursed)}</p>
-            <p className="text-white/60 text-sm mt-1.5" style={{ marginBottom: '5px' }}>Reimbursed</p>
+            <p className="text-2xl font-bold text-white">{unmatchedChargesCount}</p>
+            <p className="text-white/60 text-sm mt-1.5" style={{ marginBottom: '5px' }}>Unmatched Charges</p>
           </GlassCard>
         </motion.div>
 
