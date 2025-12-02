@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { motion, useAnimationControls } from 'framer-motion';
+import { createPortal } from 'react-dom';
+import { motion, useAnimationControls, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Receipt,
@@ -8,6 +9,8 @@ import {
   CreditCard,
   TrendingUp,
   Bell,
+  X,
+  Wallet,
 } from 'lucide-react';
 import { GlassCard, FloatingActionButton, Badge } from '../components/ui';
 import { useStore } from '../store/useStore';
@@ -17,7 +20,13 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { user, expenses, notifications } = useStore();
   const [isRinging, setIsRinging] = useState(false);
+  const [showExpenseTypeModal, setShowExpenseTypeModal] = useState(false);
   const bellControls = useAnimationControls();
+
+  const handleExpenseTypeSelect = (type: 'reimbursement' | 'company_card') => {
+    setShowExpenseTypeModal(false);
+    navigate(`/expense/new?type=${type}`);
+  };
 
   const handleBellHover = async () => {
     if (isRinging) return;
@@ -239,7 +248,93 @@ export function DashboardPage() {
       </motion.div>
 
       {/* Floating action button */}
-      <FloatingActionButton onClick={() => navigate('/expense/new')} />
+      <FloatingActionButton onClick={() => setShowExpenseTypeModal(true)} />
+
+      {/* Expense Type Selection Modal */}
+      {createPortal(
+        <AnimatePresence>
+          {showExpenseTypeModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 flex items-center justify-center p-4 bg-black/80"
+              style={{ zIndex: 9999 }}
+              onClick={() => setShowExpenseTypeModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="w-full max-w-sm rounded-3xl overflow-hidden"
+                style={{
+                  background: 'rgba(30, 30, 50, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="p-6 border-b border-white/10 flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-white" style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '15px' }}>New Expense</h2>
+                  <motion.button
+                    onClick={() => setShowExpenseTypeModal(false)}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    style={{ marginTop: '5px', marginBottom: '5px', marginRight: '15px' }}
+                    whileHover={{ rotate: 180, scale: 1.1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <X className="w-5 h-5 text-white" />
+                  </motion.button>
+                </div>
+
+                {/* Options */}
+                <div className="p-6 space-y-4">
+                  <p className="text-white/60 text-sm text-center mb-4" style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    What type of expense is this?
+                  </p>
+
+                  {/* Company Card Option */}
+                  <motion.button
+                    onClick={() => handleExpenseTypeSelect('company_card')}
+                    className="w-full p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent-primary/50 transition-all flex items-center gap-4"
+                    style={{ marginLeft: '15px', marginRight: '15px', marginTop: '5px', marginBottom: '5px', width: 'calc(100% - 30px)' }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center" style={{ marginTop: '3px', marginLeft: '3px', marginBottom: '3px' }}>
+                      <CreditCard className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <h3 className="text-white font-semibold">Company Card</h3>
+                      <p className="text-white/50 text-sm">Paid with corporate card</p>
+                    </div>
+                  </motion.button>
+
+                  {/* Reimbursement Option */}
+                  <motion.button
+                    onClick={() => handleExpenseTypeSelect('reimbursement')}
+                    className="w-full p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent-primary/50 transition-all flex items-center gap-4"
+                    style={{ marginLeft: '15px', marginRight: '15px', marginTop: '5px', marginBottom: '15px', width: 'calc(100% - 30px)' }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center" style={{ marginTop: '3px', marginLeft: '3px', marginBottom: '3px' }}>
+                      <Wallet className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <h3 className="text-white font-semibold">Reimbursement</h3>
+                      <p className="text-white/50 text-sm">Paid out of pocket</p>
+                    </div>
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }

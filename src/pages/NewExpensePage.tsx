@@ -159,7 +159,8 @@ export function NewExpensePage() {
     setIsProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const numAmount = parseFloat(amount);
+    // Use calculated total (subtotal + tax) as the expense amount
+    const numAmount = calculatedTotal;
     const newExpense = {
       userId: user?.id || '1',
       amount: numAmount,
@@ -192,7 +193,8 @@ export function NewExpensePage() {
     setIsProcessing(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const numAmount = parseFloat(amount);
+    // Use calculated total (subtotal + tax) as the expense amount
+    const numAmount = calculatedTotal;
 
     // Company card expenses skip approval and are 'unmatched' until linked to card feed
     // Reimbursement expenses go through normal approval flow
@@ -343,13 +345,15 @@ export function NewExpensePage() {
               )}
 
               {/* Receipt preview/upload */}
-              <GlassCard padding="md" className="mb-4" style={{ marginBottom: '20px', marginLeft: '20px', marginRight: '20px' }}>
-                <ReceiptUploader
-                  files={receiptFiles}
-                  onFilesChange={handleReceiptFilesChange}
-                  required={true}
-                  maxFiles={10}
-                />
+              <GlassCard padding="md" className="mb-4 overflow-hidden" style={{ marginBottom: '20px', marginLeft: '20px', marginRight: '20px' }}>
+                <div style={{ margin: '0 5px' }}>
+                  <ReceiptUploader
+                    files={receiptFiles}
+                    onFilesChange={handleReceiptFilesChange}
+                    required={true}
+                    maxFiles={10}
+                  />
+                </div>
               </GlassCard>
 
               <GlassCard>

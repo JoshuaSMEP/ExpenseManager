@@ -1,11 +1,21 @@
 import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, FileText, Image } from 'lucide-react';
-import { pdfjs } from 'react-pdf';
 import type { ReceiptFile } from '../../types';
 
-// Use the same PDF.js worker configuration as ReceiptViewer
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Lazy load PDF.js only when needed to avoid blocking file picker
+let pdfjs: typeof import('react-pdf').pdfjs | null = null;
+let pdfjsInitialized = false;
+
+const initPdfJs = async () => {
+  if (pdfjsInitialized) return pdfjs;
+
+  const reactPdf = await import('react-pdf');
+  pdfjs = reactPdf.pdfjs;
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+  pdfjsInitialized = true;
+  return pdfjs;
+};
 
 interface ReceiptUploaderProps {
   files: ReceiptFile[];
@@ -34,7 +44,11 @@ export function ReceiptUploader({
   // Generate a high-resolution thumbnail image from PDF first page
   const generatePdfThumbnail = async (pdfDataUrl: string): Promise<string> => {
     try {
-      const loadingTask = pdfjs.getDocument({ url: pdfDataUrl });
+      // Lazy load PDF.js only when processing a PDF
+      const pdfjsLib = await initPdfJs();
+      if (!pdfjsLib) return '';
+
+      const loadingTask = pdfjsLib.getDocument({ url: pdfDataUrl });
       const pdf = await loadingTask.promise;
       const page = await pdf.getPage(1);
 
@@ -131,8 +145,8 @@ export function ReceiptUploader({
         <motion.button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full py-6 border-2 border-dashed border-white/20 rounded-[22px] hover:border-accent-primary/50 transition-colors"
-          style={{ margin: '5px' }}
+          className="w-full py-6 border-2 border-dashed border-white/20 rounded-[22px] hover:border-accent-primary/50 transition-colors box-border"
+          style={{ maxWidth: '100%' }}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
         >

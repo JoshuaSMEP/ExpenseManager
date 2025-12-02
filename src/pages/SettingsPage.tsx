@@ -11,13 +11,14 @@ import {
   ChevronRight,
   CreditCard,
   Building,
+  Sparkles,
 } from 'lucide-react';
 import { GlassCard, Button } from '../components/ui';
 import { useStore } from '../store/useStore';
 
 export function SettingsPage() {
   const navigate = useNavigate();
-  const { user, logout, isDarkMode, toggleDarkMode } = useStore();
+  const { user, logout, isDarkMode, toggleDarkMode, animatedBackground, toggleAnimatedBackground } = useStore();
 
   const handleLogout = () => {
     logout();
@@ -56,6 +57,14 @@ export function SettingsPage() {
           label: 'Notifications',
           description: 'Push notifications and email alerts',
           onClick: () => {},
+        },
+        {
+          icon: Sparkles,
+          label: 'Animated Background',
+          description: animatedBackground ? 'Enabled' : 'Disabled',
+          toggle: true,
+          checked: animatedBackground,
+          onToggle: toggleAnimatedBackground,
         },
         {
           icon: Moon,
@@ -168,12 +177,14 @@ export function SettingsPage() {
                   </div>
                   {item.toggle ? (
                     <div
-                      className={`w-12 h-7 rounded-full transition-colors ${
-                        item.checked
-                          ? 'bg-accent-primary'
-                          : 'bg-white/20'
-                      }`}
-                      style={{ marginRight: '15px' }}
+                      className="w-12 h-7 rounded-full transition-colors"
+                      style={{
+                        marginRight: '15px',
+                        background: item.checked
+                          ? 'linear-gradient(135deg, #00f5ff, #00d4aa)'
+                          : 'rgba(255, 255, 255, 0.2)',
+                        boxShadow: item.checked ? '0 0 12px rgba(0, 245, 255, 0.4)' : 'none',
+                      }}
                     >
                       <motion.div
                         className="w-5 h-5 rounded-full bg-white shadow-lg"

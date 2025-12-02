@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, useInView, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp,
   TrendingDown,
@@ -8,7 +9,6 @@ import {
   Sparkles,
   ChevronRight,
   ArrowUpRight,
-  Zap,
 } from 'lucide-react';
 import { GlassCard } from '../components/ui';
 import { useStore } from '../store/useStore';
@@ -259,12 +259,17 @@ function AnimatedDonutChart({ data, size = 240 }: DonutChartProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
 
+  // Add a small gap between segments (2 degrees per segment)
+  const gapAngle = 2;
+  const totalGapAngle = gapAngle * data.length;
+  const availableAngle = 360 - totalGapAngle;
+
   let accumulatedAngle = 0;
   const segments = data.map((item, index) => {
-    const angle = (item.value / total) * 360;
+    const angle = (item.value / total) * availableAngle;
     const startAngle = accumulatedAngle;
-    accumulatedAngle += angle;
-    const dashArray = (item.value / total) * circumference;
+    accumulatedAngle += angle + gapAngle;
+    const dashArray = (angle / 360) * circumference;
     const dashOffset = circumference - dashArray;
     const rotation = startAngle - 90;
 
@@ -295,6 +300,7 @@ function AnimatedDonutChart({ data, size = 240 }: DonutChartProps) {
             strokeWidth={hoveredIndex === i ? strokeWidth + 8 : strokeWidth}
             strokeLinecap="round"
             strokeDasharray={`${segment.dashArray} ${circumference}`}
+            strokeDashoffset={0}
             style={{ transform: `rotate(${segment.rotation}deg)`, transformOrigin: 'center' }}
             initial={{ strokeDasharray: `0 ${circumference}` }}
             animate={isInView ? { strokeDasharray: `${segment.dashArray} ${circumference}` } : {}}
@@ -362,60 +368,24 @@ interface MerchantCardProps {
 }
 
 function MerchantCard({ name, amount, count, icon, gradient, index }: MerchantCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState('');
-  const [glare, setGlare] = useState({ x: 50, y: 50 });
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = (y - centerY) / 10;
-    const rotateY = (centerX - x) / 10;
-
-    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`);
-    setGlare({ x: (x / rect.width) * 100, y: (y / rect.height) * 100 });
-  };
-
-  const handleMouseLeave = () => {
-    setTransform('perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)');
-    setGlare({ x: 50, y: 50 });
-  };
-
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
       viewport={{ once: true }}
-      className="relative group"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        transform,
-        transition: 'transform 0.1s ease-out',
-      }}
+      className="relative"
     >
       {/* Card background with gradient */}
       <div
-        className="relative p-6 rounded-3xl overflow-hidden"
+        className="relative rounded-3xl overflow-hidden"
         style={{
           background: 'rgba(30, 30, 50, 0.8)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '20px',
         }}
       >
-        {/* Glare effect */}
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-          style={{
-            background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.15) 0%, transparent 60%)`,
-          }}
-        />
 
         {/* Gradient accent */}
         <div
@@ -423,10 +393,10 @@ function MerchantCard({ name, amount, count, icon, gradient, index }: MerchantCa
           style={{ background: gradient }}
         />
 
-        <div className="relative z-10">
-          <div className="flex items-start justify-between mb-4">
+        <div className="relative z-10" style={{ margin: '10px' }}>
+          <div className="flex items-start justify-between mb-5">
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
               style={{ background: gradient }}
             >
               {icon}
@@ -439,15 +409,15 @@ function MerchantCard({ name, amount, count, icon, gradient, index }: MerchantCa
             </motion.div>
           </div>
 
-          <h3 className="text-white font-semibold text-lg mb-1">{name}</h3>
-          <p className="text-white/50 text-sm mb-3">{count} transactions</p>
+          <h3 className="text-white font-semibold text-base mb-2">{name}</h3>
+          <p className="text-white/50 text-sm mb-4">{count} transactions</p>
 
           <div className="flex items-end justify-between">
-            <p className="text-2xl font-bold text-white">{formatCurrency(amount)}</p>
+            <p className="text-xl font-bold text-white">{formatCurrency(amount)}</p>
             <Sparkline
               data={[amount * 0.3, amount * 0.5, amount * 0.4, amount * 0.7, amount * 0.6, amount * 0.9, amount]}
-              width={80}
-              height={30}
+              width={70}
+              height={25}
               color="#00f5ff"
               showArea={false}
             />
@@ -484,7 +454,7 @@ function AnimatedAreaChart({ data, height = 200 }: AreaChartProps) {
   }, []);
 
   const width = containerWidth;
-  const padding = { top: 20, right: 20, bottom: 40, left: 20 };
+  const padding = { top: 20, right: 30, bottom: 50, left: 60 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
@@ -679,10 +649,10 @@ function SpendingHeatmap({ data }: HeatmapProps) {
   };
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" style={{ padding: '15px' }}>
       <div className="flex gap-1">
         {/* Day labels */}
-        <div className="flex flex-col gap-1 text-xs text-white/40 pr-2">
+        <div className="flex flex-col gap-1 text-xs text-white/40 pr-3" style={{ minWidth: '32px' }}>
           {days.map((day, i) => (
             <div key={i} className="h-4 flex items-center">{day}</div>
           ))}
@@ -823,6 +793,7 @@ function FloatingOrbs() {
 // MAIN ANALYTICS PAGE
 // ============================================================================
 export function AnalyticsPage() {
+  const navigate = useNavigate();
   const { expenses: storeExpenses } = useStore();
 
   // Use MEP demo data combined with any store expenses
@@ -980,6 +951,7 @@ export function AnalyticsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="mb-8"
+          style={{ paddingLeft: '15px' }}
         >
           <div className="flex items-center gap-3 mb-2">
             <motion.div
@@ -994,7 +966,7 @@ export function AnalyticsPage() {
         </motion.div>
 
         {/* Hero Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
           {/* Total Spending Card */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -1011,14 +983,14 @@ export function AnalyticsPage() {
               />
 
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-4" style={{ marginLeft: '15px', marginTop: '15px' }}>
                   <div className="p-2 rounded-xl bg-accent-primary/20">
                     <DollarSign className="w-5 h-5 text-accent-primary" />
                   </div>
                   <span className="text-white/60 text-sm font-medium">This Month</span>
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4" style={{ marginLeft: '15px' }}>
                   <h2 className="text-5xl md:text-6xl font-bold text-white mb-2">
                     <AnimatedCounter value={analytics.totalThisMonth} prefix="$" decimals={2} />
                   </h2>
@@ -1033,7 +1005,7 @@ export function AnalyticsPage() {
 
                 {/* Sparkline */}
                 <div className="mt-6">
-                  <p className="text-white/40 text-xs mb-2">Last 30 days</p>
+                  <p className="text-white/40 text-xs mb-2" style={{ marginLeft: '15px' }}>Last 30 days</p>
                   <Sparkline data={analytics.sparklineData} width={280} height={50} />
                 </div>
               </div>
@@ -1062,11 +1034,11 @@ export function AnalyticsPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-white/50">Spent</span>
-                      <span className="text-white font-medium">{formatCurrency(analytics.totalThisMonth)}</span>
+                      <span className="text-white font-medium" style={{ marginRight: '30px' }}>{formatCurrency(analytics.totalThisMonth)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-white/50">Remaining</span>
-                      <span className={`font-medium ${analytics.budget - analytics.totalThisMonth < 0 ? 'text-red-400' : 'text-success-primary'}`}>
+                      <span className={`font-medium ${analytics.budget - analytics.totalThisMonth < 0 ? 'text-red-400' : 'text-success-primary'}`} style={{ marginRight: '30px' }}>
                         {formatCurrency(Math.max(0, analytics.budget - analytics.totalThisMonth))}
                       </span>
                     </div>
@@ -1087,45 +1059,51 @@ export function AnalyticsPage() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Category Breakdown</h2>
+          <div className="flex items-center justify-between mb-6" style={{ paddingLeft: '15px', paddingRight: '15px', marginTop: '25px' }}>
+            <div>
+              <h2 className="text-xl font-bold text-white">Category Breakdown</h2>
+              <p className="text-white/50 text-sm mt-1">Top 6 spending categories this month</p>
+            </div>
             <motion.button
               whileHover={{ x: 5 }}
               className="flex items-center gap-1 text-accent-primary text-sm font-medium"
+              onClick={() => navigate('/categories')}
             >
               View all <ChevronRight className="w-4 h-4" />
             </motion.button>
           </div>
 
-          <GlassCard className="p-6" style={{ background: 'rgba(30, 30, 50, 0.6)' }}>
-            <div className="flex flex-col lg:flex-row items-center gap-8">
-              <AnimatedDonutChart data={analytics.categoryData} size={220} />
+          <div style={{ marginLeft: '15px', marginRight: '15px' }}>
+            <GlassCard className="p-8" style={{ background: 'rgba(30, 30, 50, 0.6)' }}>
+              <div className="flex flex-col lg:flex-row items-center gap-8" style={{ padding: '15px' }}>
+                <AnimatedDonutChart data={analytics.categoryData} size={220} />
 
-              {/* Legend */}
-              <div className="flex-1 grid grid-cols-2 gap-3">
-                {analytics.categoryData.map((item, index) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ background: item.color, boxShadow: `0 0 10px ${item.color}40` }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm font-medium truncate">{item.label}</p>
-                      <p className="text-white/50 text-xs">{formatCurrency(item.value)}</p>
-                    </div>
-                    <span className="text-lg">{item.icon}</span>
-                  </motion.div>
-                ))}
+                {/* Legend */}
+                <div className="flex-1 grid grid-cols-2 gap-3">
+                  {analytics.categoryData.map((item, index) => (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ background: item.color, boxShadow: `0 0 10px ${item.color}40` }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium truncate">{item.label}</p>
+                        <p className="text-white/50 text-xs">{formatCurrency(item.value)}</p>
+                      </div>
+                      <span className="text-lg">{item.icon}</span>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </GlassCard>
+            </GlassCard>
+          </div>
         </motion.div>
 
         {/* ================================================================ */}
@@ -1137,16 +1115,13 @@ export function AnalyticsPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="mb-8"
+          style={{ marginTop: '25px' }}
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
             <h2 className="text-xl font-bold text-white">Top Merchants</h2>
-            <div className="flex items-center gap-2 text-white/50 text-sm">
-              <Zap className="w-4 h-4 text-accent-primary" />
-              <span>Hover for 3D effect</span>
-            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
             {analytics.topMerchants.map((merchant, index) => (
               <MerchantCard
                 key={merchant.name}
@@ -1170,8 +1145,9 @@ export function AnalyticsPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="mb-8"
+          style={{ marginTop: '25px' }}
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
             <h2 className="text-xl font-bold text-white">Monthly Trends</h2>
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
@@ -1185,9 +1161,13 @@ export function AnalyticsPage() {
             </div>
           </div>
 
-          <GlassCard className="p-6" style={{ background: 'rgba(30, 30, 50, 0.6)' }}>
-            <AnimatedAreaChart data={analytics.monthlyTrend} height={250} />
-          </GlassCard>
+          <div style={{ marginLeft: '15px', marginRight: '15px' }}>
+            <GlassCard className="p-8" style={{ background: 'rgba(30, 30, 50, 0.6)' }}>
+              <div style={{ padding: '15px' }}>
+                <AnimatedAreaChart data={analytics.monthlyTrend} height={250} />
+              </div>
+            </GlassCard>
+          </div>
         </motion.div>
 
         {/* ================================================================ */}
@@ -1198,8 +1178,9 @@ export function AnalyticsPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          style={{ marginTop: '25px' }}
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
             <h2 className="text-xl font-bold text-white">Spending Activity</h2>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-white/50" />
@@ -1207,9 +1188,11 @@ export function AnalyticsPage() {
             </div>
           </div>
 
-          <GlassCard className="p-6 overflow-x-auto" style={{ background: 'rgba(30, 30, 50, 0.6)' }}>
-            <SpendingHeatmap data={analytics.heatmapData} />
-          </GlassCard>
+          <div style={{ marginLeft: '15px', marginRight: '15px' }}>
+            <GlassCard className="p-8 overflow-x-auto" style={{ background: 'rgba(30, 30, 50, 0.6)' }}>
+              <SpendingHeatmap data={analytics.heatmapData} />
+            </GlassCard>
+          </div>
         </motion.div>
       </div>
     </div>
@@ -1227,12 +1210,12 @@ function getCategoryColor(category: string): string {
     supplies: '#ffd93d',
     entertainment: '#c084fc',
     tools: '#f97316',
-    materials: '#06b6d4',
+    materials: '#22d3ee',
     permits: '#8b5cf6',
     safety: '#ef4444',
     fuel: '#22c55e',
-    software: '#3b82f6',
-    it: '#6366f1',
+    software: '#a855f7',
+    it: '#ec4899',
     other: '#94a3b8',
   };
   return colors[category] || colors.other;

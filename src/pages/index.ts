@@ -17,3 +17,4 @@ export { AdminPage } from './AdminPage';
 export { EditExpensePage } from './EditExpensePage';
 export { ManualExpensePage } from './ManualExpensePage';
 export { AnalyticsPage } from './AnalyticsPage';
+export { CategoryBreakdownPage } from './CategoryBreakdownPage';

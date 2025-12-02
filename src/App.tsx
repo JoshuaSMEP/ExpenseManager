@@ -21,6 +21,7 @@ import {
   EditExpensePage,
   ManualExpensePage,
   AnalyticsPage,
+  CategoryBreakdownPage,
 } from './pages';
 import { useStore } from './store/useStore';
 
@@ -220,6 +221,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <AnalyticsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/categories"
+          element={
+            <ProtectedRoute>
+              <CategoryBreakdownPage />
             </ProtectedRoute>
           }
         />

@@ -1,6 +1,30 @@
 import { motion } from 'framer-motion';
+import { useStore } from '../../store/useStore';
 
 export function AnimatedBackground() {
+  const { animatedBackground } = useStore();
+
+  // Static gradient background
+  if (!animatedBackground) {
+    return (
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 75%, #16213e 100%)',
+          }}
+        />
+        {/* Subtle static overlay for depth */}
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: 'radial-gradient(ellipse at 30% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%)',
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
       {/* Animated gradient background */}

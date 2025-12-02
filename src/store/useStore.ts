@@ -191,6 +191,7 @@ interface AppState {
   // UI State
   isDarkMode: boolean;
   isLoading: boolean;
+  animatedBackground: boolean;
 
   // Actions
   login: (email: string) => Promise<void>;
@@ -220,6 +221,7 @@ interface AppState {
   markNotificationRead: (id: string) => void;
 
   toggleDarkMode: () => void;
+  toggleAnimatedBackground: () => void;
   setLoading: (loading: boolean) => void;
 }
 
@@ -238,6 +240,7 @@ export const useStore = create<AppState>((set) => ({
   exportBatches: [],
   isDarkMode: true,
   isLoading: false,
+  animatedBackground: true,
 
   // Auth actions
   login: async (email: string) => {
@@ -420,6 +423,10 @@ export const useStore = create<AppState>((set) => ({
       }
       return { isDarkMode: newMode };
     });
+  },
+
+  toggleAnimatedBackground: () => {
+    set((state) => ({ animatedBackground: !state.animatedBackground }));
   },
 
   setLoading: (loading) => {
